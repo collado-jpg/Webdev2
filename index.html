@@ -1,25 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fetch a Dad Joke</title>
+    <title>GitHub User Lookup</title>
 </head>
 <body>
-    <button id="loadJoke">Get Joke</button>
-    <p id="jokeResult">dad's joke</p>
+    <form>
+        <input id="username" placeholder="GitHub username" />
+        <button>Search</button>
+    </form>
+    <div id="profile"></div>
 
     <script>
-        document.getElementById("loadJoke").addEventListener("click", async () => {
-            const res = await fetch("https://icanhazdadjoke.com/", {
-                headers: {
-                    Accept: "application/json"
-                }
-            });
-            const data = await res.json();
-            document.getElementById("jokeResult").innerText = data.joke;
+        document.querySelector("form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const username = document.getElementById("username").value;
+
+            try {
+                const res = await fetch(`https://api.github.com/users/${username}`);
+                const { avatar_url, bio } = await res.json();
+
+                document.getElementById("profile").innerHTML = `
+                    <div class="card">
+                        <img src="${avatar_url}" width="100" />
+                        <p>${bio || "No bio available."}</p>
+                    </div>
+                `;
+            } catch (err) {
+                document.getElementById("profile").innerText = "User not found.";
+            }
         });
     </script>
 </body>
 </html>
-
-
-
